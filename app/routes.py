@@ -7,3 +7,8 @@ def index():
 @app.route("/about")
 def about():
     return "All about Flask"
+
+
+@app.route("/admin")
+def admin():
+    return "Admin dashboard"
