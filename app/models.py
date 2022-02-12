@@ -34,7 +34,7 @@ class Session(db.Model):
     created = db.Column(db.DateTime, index=True, default=datetime.utcnow,
         nullable=False)
     edited = db.Column(db.DateTime, index=True, default=datetime.utcnow,
-        nullable=False)
+        onupdate=datetime.utcnow, nullable=False)
     starttime = db.Column(db.DateTime, index=True, nullable=True)
     endtime = db.Column(db.DateTime, index=True, nullable=True)
 
