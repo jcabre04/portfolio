@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Users:</h1>
+{% for user in users %}
+<div>
+    <p>{{ user.username }} has admin privileges? <b>{{ user.admin }}</b></p>
+</div>
+{% endfor %}
+
+<h1>Sessions:</h1>
+{% for session in sessions %}
+<div>
+    <p><b>{{ session.name }}: </b>
+        <ul>
+          <li>Duration: {{ session.duration }}</li>
+          <li>Level: {{ session.level }}</li>
+          <li>Explanation: {{ session.explanation }}</li>
+          <li>Created: {{ session.created }}</li>
+          <li>Last Edited: {{ session.edited }}</li>
+          <li>Starttime (optional): {{ session.starttime }}</li>
+          <li>endtime (optional): {{ session.endtime }}</li>
+          <li>Private: {{ session.private }}</li>
+          <li>Author: {{ session.author.username }}</li>
+        </ul>
+    </p>
+</div>
+{% endfor %}
+
+<h1>Skills:</h1>
+{% for skill in skills %}
+<div>
+    <p><b>{{ skill.name }}:</b>
+        <ul>
+          <li>Explanation: {{ skill.explanation }}</li>
+        </ul>
+    </p>
+</div>
+
+{% endfor %}
+
+{% endblock %}
