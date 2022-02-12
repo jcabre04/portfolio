@@ -2,14 +2,20 @@
 
 {% block content %}
 
-<h1>Users:</h1>
+{% if current_user.is_active %}
+<h1>Hi, {{ current_user.username }}!</h1>
+{% else %}
+<h1>Hi Guest!</h1>
+{% endif %}
+
+<h2>Users:</h2>
 {% for user in users %}
 <div>
     <p>{{ user.username }} has admin privileges? <b>{{ user.admin }}</b></p>
 </div>
 {% endfor %}
 
-<h1>Sessions:</h1>
+<h2>Sessions:</h2>
 {% for session in sessions %}
 <div>
     <p><b>{{ session.name }}: </b>
@@ -28,7 +34,7 @@
 </div>
 {% endfor %}
 
-<h1>Skills:</h1>
+<h2>Skills:</h2>
 {% for skill in skills %}
 <div>
     <p><b>{{ skill.name }}:</b>
