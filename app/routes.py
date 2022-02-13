@@ -77,6 +77,9 @@ def session():
 def about():
     return "All about Flask"
 
+@app.route("/changelog")
+def changelog():
+    return "Changelog goes here"
 
 @app.route("/admin")
 @login_required
