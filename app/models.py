@@ -72,3 +72,19 @@ class Skill(db.Model):
 
     def __repr__(self):
         return '<Skill {}>'.format(self.name)
+
+
+def create_skills_from_csv_string(csv):
+    potential = csv.split(",")
+    skill_objects = []
+
+    for p in potential:
+        exists = Skill.query.filter_by(name=p).first()
+        if exists is None:
+            exists = Skill(name=p)
+            db.session.add(exists)
+            db.session.commit()
+
+        skill_objects.append(exists)
+
+    return skill_objects

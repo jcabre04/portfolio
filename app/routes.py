@@ -1,6 +1,7 @@
-from app import app
+from app import app, db
 from app.models import User, Session, Skill
-from app.forms import LoginForm
+from app.models import create_skills_from_csv_string
+from app.forms import LoginForm, SessionForm
 
 from flask import render_template, flash, redirect, url_for, request
 
@@ -44,6 +45,33 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+@app.route("/session", methods=['GET','POST'])
+@login_required
+def session():
+    form = SessionForm()
+
+    if form.validate_on_submit():
+        skills = create_skills_from_csv_string(form.skills.data)
+        new_session = Session(
+            name=form.name.data,
+            duration=form.duration.data,
+            level=form.level.data,
+            explanation=form.explanation.data,
+            starttime=form.starttime.data,
+            endtime=form.endtime.data,
+            private=form.private.data)
+
+        for skill in skills:
+            new_session.skills.append(skill)
+
+        current_user.sessions.append(new_session)
+
+        db.session.add(new_session)
+        db.session.commit()
+        return redirect(url_for('session'))
+
+    return render_template('session.html', title='Session', form=form)
 
 @app.route("/about")
 def about():
