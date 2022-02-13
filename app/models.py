@@ -79,6 +79,7 @@ def create_skills_from_csv_string(csv):
     skill_objects = []
 
     for p in potential:
+        p = p.strip()
         exists = Skill.query.filter_by(name=p).first()
         if exists is None:
             exists = Skill(name=p)
