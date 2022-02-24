@@ -33,6 +33,20 @@
             {% endfor %}
         </p>
         <p>
+            {{ form.created.label }}<br>
+            {{ form.created(size=32) }}<br>
+            {% for error in form.created.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.edited.label }}<br>
+            {{ form.edited(size=32) }}<br>
+            {% for error in form.edited.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
             {{ form.starttime.label }}<br>
             {{ form.starttime(size=32) }}<br>
             {% for error in form.starttime.errors %}

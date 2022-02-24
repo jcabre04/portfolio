@@ -9,6 +9,8 @@ from flask_login import current_user, login_user, logout_user, login_required
 
 from werkzeug.urls import url_parse
 
+from datetime import datetime
+
 @app.route("/")
 @app.route("/index")
 def index():
@@ -61,6 +63,12 @@ def session():
             starttime=form.starttime.data,
             endtime=form.endtime.data,
             private=form.private.data)
+
+        if form.created.data:
+            new_session.created = form.created.data
+
+        if form.edited.data:
+            new_session.edited = form.edited.data
 
         for skill in skills:
             new_session.skills.append(skill)

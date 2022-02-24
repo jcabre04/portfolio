@@ -25,10 +25,11 @@
           <li>Explanation: {{ session.explanation }}</li>
           <li>Created: {{ session.created }}</li>
           <li>Last Edited: {{ session.edited }}</li>
-          <li>Starttime (optional): {{ session.starttime }}</li>
-          <li>endtime (optional): {{ session.endtime }}</li>
+          <li>Starttime: {{ session.starttime }}</li>
+          <li>endtime: {{ session.endtime }}</li>
           <li>Private: {{ session.private }}</li>
           <li>Author: {{ session.author.username }}</li>
+          <li>Skills: {{ session.get_skill_list_string() }}</li>
         </ul>
     </p>
 </div>

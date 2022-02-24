@@ -15,6 +15,10 @@ class SessionForm(FlaskForm):
     level = SelectField('Level', validators=[DataRequired()],
         choices=["untrained", "basic", "intermediate", "advanced", "master"])
     explanation = TextAreaField('[optional] Explanation')
+    created = DateTimeField('[optional] Date Completed (YYYY-MM-DD)',
+        format='%Y-%m-%d', validators=[Optional()])
+    edited = DateTimeField('[optional] Date Last Edited (YYYY-MM-DD)',
+        format='%Y-%m-%d', validators=[Optional()])
     starttime = DateTimeField('[optional] Start Time (HH:MM)',
         format='%H:%M', validators=[Optional()])
     endtime = DateTimeField('[optional] End Time (HH:MM)',

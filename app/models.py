@@ -65,6 +65,9 @@ class Session(db.Model):
     def __repr__(self):
         return '<Session {}>'.format(self.name)
 
+    def get_skill_list_string(self):
+        return ','.join( [skill.name for skill in self.skills.all()] )
+
 class Skill(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), index=True, nullable=False)
