@@ -6,19 +6,21 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from flask_login import UserMixin
 
+
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
 
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), index=True, unique=True, nullable=False)
+    username = db.Column(db.String(64), index=True, unique=True,
+                         nullable=False)
     email = db.Column(db.String(120), index=True, unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
     admin = db.Column(db.Boolean, default=False, nullable=False)
 
     # Foreign Keys
-
 
     # Methods to access relationships
     sessions = db.relationship('Session', backref='author', lazy='dynamic')
@@ -32,12 +34,15 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+
 bridge_session_skill = db.Table('bridge_session_skill',
-    db.Column('session_id', db.Integer, db.ForeignKey('session.id'),
-        primary_key=True),
-    db.Column('skill_id', db.Integer, db.ForeignKey('skill.id'),
-        primary_key=True)
-)
+                                db.Column('session_id', db.Integer,
+                                          db.ForeignKey('session.id'),
+                                          primary_key=True),
+                                db.Column('skill_id', db.Integer,
+                                          db.ForeignKey('skill.id'),
+                                          primary_key=True))
+
 
 class Session(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -47,9 +52,9 @@ class Session(db.Model):
     explanation = db.Column(db.Text, index=True, nullable=True)
 
     created = db.Column(db.DateTime, index=True, default=datetime.utcnow,
-        nullable=False)
+                        nullable=False)
     edited = db.Column(db.DateTime, index=True, default=datetime.utcnow,
-        onupdate=datetime.utcnow, nullable=False)
+                       onupdate=datetime.utcnow, nullable=False)
     starttime = db.Column(db.DateTime, index=True, nullable=True)
     endtime = db.Column(db.DateTime, index=True, nullable=True)
 
@@ -60,13 +65,15 @@ class Session(db.Model):
 
     # Methods to access relationships
     skills = db.relationship('Skill', secondary=bridge_session_skill,
-        lazy="dynamic", backref=db.backref('sessions', lazy=True))
+                             lazy="dynamic",
+                             backref=db.backref('sessions', lazy=True))
 
     def __repr__(self):
         return '<Session {}>'.format(self.name)
 
     def get_skill_list_string(self):
-        return ','.join( [skill.name for skill in self.skills.all()] )
+        return ','.join([skill.name for skill in self.skills.all()])
+
 
 class Skill(db.Model):
     id = db.Column(db.Integer, primary_key=True)

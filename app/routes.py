@@ -9,7 +9,6 @@ from flask_login import current_user, login_user, logout_user, login_required
 
 from werkzeug.urls import url_parse
 
-from datetime import datetime
 
 @app.route("/")
 @app.route("/index")
@@ -18,9 +17,10 @@ def index():
     sessions = Session.query.all()
     skills = Skill.query.all()
     return render_template('index.html', users=users, sessions=sessions,
-        skills=skills)
+                           skills=skills)
 
-@app.route("/login", methods=['GET','POST'])
+
+@app.route("/login", methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
@@ -43,12 +43,14 @@ def login():
 
     return render_template('login.html', title='Login', form=form)
 
+
 @app.route("/logout",)
 def logout():
     logout_user()
     return redirect(url_for('index'))
 
-@app.route("/session", methods=['GET','POST'])
+
+@app.route("/session", methods=['GET', 'POST'])
 @login_required
 def session():
     form = SessionForm()
@@ -81,13 +83,16 @@ def session():
 
     return render_template('session.html', title='Session', form=form)
 
+
 @app.route("/about")
 def about():
     return "All about Flask"
 
+
 @app.route("/changelog")
 def changelog():
     return "Changelog goes here"
+
 
 @app.route("/admin")
 @login_required
