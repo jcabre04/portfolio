@@ -10,9 +10,9 @@ from app.models import Session, Skill, User, create_skills_from_csv_string
 @app.route("/")
 @app.route("/index")
 def index():
-    users = User.query.all()
-    sessions = Session.query.all()
-    skills = Skill.query.all()
+    users = User.query.all()[-5:]
+    sessions = Session.query.all()[-5:]
+    skills = Skill.query.all()[-5:]
     return render_template(
         "index.html", users=users, sessions=sessions, skills=skills
     )
@@ -80,7 +80,16 @@ def session():
         db.session.commit()
         return redirect(url_for("session"))
 
-    return render_template("session.html", title="Session", form=form)
+    return render_template("session_form.html", title="Session", form=form)
+
+
+@app.route("/session/all")
+@login_required
+def session_all():
+    sessions = Session.query.all()
+    return render_template(
+        "session_all.html", title="All Sessions", sessions=sessions
+    )
 
 
 @app.route("/about")

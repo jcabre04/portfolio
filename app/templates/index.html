@@ -11,28 +11,15 @@
 <h2>Users:</h2>
 {% for user in users %}
 <div>
-    <p>{{ user.username }} has admin privileges? <b>{{ user.admin }}</b></p>
+    <p>Does {{ user.username }} have admin privileges? <b>{{ user.admin }}</b></p>
 </div>
 {% endfor %}
 
 <h2>Sessions:</h2>
 {% for session in sessions %}
-<div>
-    <p><b>{{ session.name }}: </b>
-        <ul>
-          <li>Duration: {{ session.duration }}</li>
-          <li>Level: {{ session.level }}</li>
-          <li>Explanation: {{ session.explanation }}</li>
-          <li>Created: {{ session.created }}</li>
-          <li>Last Edited: {{ session.edited }}</li>
-          <li>Starttime: {{ session.starttime }}</li>
-          <li>endtime: {{ session.endtime }}</li>
-          <li>Private: {{ session.private }}</li>
-          <li>Author: {{ session.author.username }}</li>
-          <li>Skills: {{ session.get_skill_list_string() }}</li>
-        </ul>
-    </p>
-</div>
+
+  {% include 'includes/session.html' %}
+
 {% endfor %}
 
 <h2>Skills:</h2>
