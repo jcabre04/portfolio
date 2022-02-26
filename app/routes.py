@@ -1,13 +1,10 @@
-from app import app, db
-from app.models import User, Session, Skill
-from app.models import create_skills_from_csv_string
-from app.forms import LoginForm, SessionForm
-
-from flask import render_template, flash, redirect, url_for, request
-
-from flask_login import current_user, login_user, logout_user, login_required
-
+from flask import flash, redirect, render_template, request, url_for
+from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.urls import url_parse
+
+from app import app, db
+from app.forms import LoginForm, SessionForm
+from app.models import Session, Skill, User, create_skills_from_csv_string
 
 
 @app.route("/")
