@@ -6,7 +6,11 @@
 
   {% for session in sessions %}
 
-    {% include 'includes/session.html' %}
+    {% if short_session %}
+      {% include 'includes/session_short.html' %}
+    {% else %}
+      {% include 'includes/session.html' %}
+    {% endif %}
 
   {% endfor %}
 

@@ -14,7 +14,11 @@ def index():
     sessions = Session.query.all()[-5:]
     skills = Skill.query.all()[-5:]
     return render_template(
-        "index.html", users=users, sessions=sessions, skills=skills
+        "index.html",
+        users=users,
+        sessions=sessions,
+        short_session=True,
+        skills=skills,
     )
 
 
@@ -88,8 +92,80 @@ def session():
 def session_all():
     sessions = Session.query.all()
     return render_template(
+        "session_all.html",
+        title="All Sessions",
+        short_session=True,
+        sessions=sessions,
+    )
+
+
+@app.route("/session/<id>")
+@login_required
+def session_one(id):
+    sessions = [Session.query.get(id)]
+
+    if not sessions[0]:
+        raise ("Invalid session id")
+
+    return render_template(
         "session_all.html", title="All Sessions", sessions=sessions
     )
+
+
+@app.route("/session/<id>/update", methods=["GET", "POST"])
+@login_required
+def session_update(id):
+    form = SessionForm()
+    se = Session.query.get(id)
+
+    if not se:
+        raise ("Invalid session id")
+
+    # Successful update, replace db values with form's
+    if form.validate_on_submit():
+        skills = create_skills_from_csv_string(form.skills.data)
+        se.name = form.name.data
+        se.duration = form.duration.data
+        se.level = form.level.data
+        se.explanation = form.explanation.data
+        se.starttime = form.starttime.data
+        se.endtime = form.endtime.data
+        se.private = form.private.data
+        se.skills = []
+
+        if form.created.data:
+            se.created = form.created.data
+
+        if form.edited.data:
+            se.edited = form.edited.data
+
+        for skill in skills:
+            se.skills.append(skill)
+
+        db.session.commit()
+        return redirect(url_for("session_one", id=se.id))
+
+    form.name.data = se.name
+    form.duration.data = se.duration
+    form.level.data = se.level
+    form.explanation.data = se.explanation
+    form.created.data = se.created
+    form.starttime.data = se.starttime
+    form.endtime.data = se.endtime
+    form.private.data = se.private
+    form.skills.data = se.get_skill_list_string()
+    return render_template("session_form.html", title="Session", form=form)
+
+
+@app.route("/session/<id>/delete")
+@login_required
+def session_delete(id):
+    se = Session.query.get(id)
+
+    if se:
+        db.session.delete(se)
+        db.session.commit()
+    return redirect(url_for("session_all"))
 
 
 @app.route("/about")
