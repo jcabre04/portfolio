@@ -4,7 +4,7 @@ from app.models import User, Session, Skill
 
 @app.shell_context_processor
 def make_shell_processor():
-    return {'db': db, 'User': User, 'Session': Session, 'Skill': Skill}
+    return {"db": db, "User": User, "Session": Session, "Skill": Skill}
 
 
 if __name__ == "__main__":
