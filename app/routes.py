@@ -5,6 +5,7 @@ from werkzeug.urls import url_parse
 from app import app, db
 from app.forms import LoginForm, SessionForm
 from app.models import Session, Skill, User, create_skills_from_csv_string
+import pytz
 
 
 @app.route("/")
@@ -52,6 +53,13 @@ def logout():
     return redirect(url_for("index"))
 
 
+def _localize_tz(pytz_local, datetime_obj):
+    localized = pytz_local.localize(datetime_obj, is_dst=None).astimezone(
+        pytz.utc
+    )
+    return localized
+
+
 @app.route("/session", methods=["GET", "POST"])
 @login_required
 def session():
@@ -69,11 +77,13 @@ def session():
             private=form.private.data,
         )
 
+        local = pytz.timezone(form.timezone.data)
+
         if form.created.data:
-            new_session.created = form.created.data
+            new_session.created = _localize_tz(local, form.created.data)
 
         if form.edited.data:
-            new_session.edited = form.edited.data
+            new_session.edited = _localize_tz(local, form.edited.data)
 
         for skill in skills:
             new_session.skills.append(skill)
@@ -84,6 +94,7 @@ def session():
         db.session.commit()
         return redirect(url_for("session"))
 
+    form.timezone.data = "US/Pacific"
     return render_template("session_form.html", title="Session", form=form)
 
 
@@ -133,11 +144,13 @@ def session_update(id):
         se.private = form.private.data
         se.skills = []
 
+        local = pytz.timezone(form.timezone.data)
+
         if form.created.data:
-            se.created = form.created.data
+            se.created = _localize_tz(local, form.created.data)
 
         if form.edited.data:
-            se.edited = form.edited.data
+            se.edited = _localize_tz(local, form.edited.data)
 
         for skill in skills:
             se.skills.append(skill)
@@ -149,6 +162,7 @@ def session_update(id):
     form.duration.data = se.duration
     form.level.data = se.level
     form.explanation.data = se.explanation
+    form.timezone.data = "UTC"
     form.created.data = se.created
     form.starttime.data = se.starttime
     form.endtime.data = se.endtime

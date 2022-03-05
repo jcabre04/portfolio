@@ -1,7 +1,16 @@
 from flask_wtf import FlaskForm
-from wtforms import (BooleanField, DateTimeField, IntegerField, PasswordField,
-                     SelectField, StringField, SubmitField, TextAreaField)
+from wtforms import (
+    BooleanField,
+    DateTimeField,
+    IntegerField,
+    PasswordField,
+    SelectField,
+    StringField,
+    SubmitField,
+    TextAreaField,
+)
 from wtforms.validators import DataRequired, Optional, ValidationError
+import pytz
 
 
 class LoginForm(FlaskForm):
@@ -20,6 +29,9 @@ class SessionForm(FlaskForm):
         choices=["untrained", "basic", "intermediate", "advanced", "master"],
     )
     explanation = TextAreaField("[optional] Explanation")
+    timezone = SelectField(
+        "Timezone", validators=[DataRequired()], choices=pytz.common_timezones
+    )
     created = DateTimeField(
         "[optional] Date Completed (YYYY-MM-DD)",
         format="%Y-%m-%d",

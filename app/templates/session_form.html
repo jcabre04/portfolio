@@ -33,6 +33,13 @@
             {% endfor %}
         </p>
         <p>
+            {{ form.timezone.label }}<br>
+            {{ form.timezone() }}<br>
+            {% for error in form.timezone.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
             {{ form.created.label }}<br>
             {{ form.created(size=32) }}<br>
             {% for error in form.created.errors %}
