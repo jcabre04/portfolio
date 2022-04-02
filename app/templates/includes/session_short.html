@@ -1,11 +1,15 @@
 <div>
-    <p><a href="{{ url_for('session_one', id=session.id) }}"><b>{{ session.name }}: </b></a>
+    <p>{{session.id}} | <a href="{{url_for('session_one', id=session.id) }}"><b> {{ session.name }}: </b></a>
         <ul>
           <li>Duration: {{ session.duration }}</li>
           <li>Skills: {{ session.get_skill_list_string() }}</li>
           {% if current_user.is_active %}
           <li><a href="{{ url_for('session_update', id=session.id) }}">Edit</a> | <a href="{{ url_for('session_delete', id=session.id) }}">Delete</a></li>
           {% endif %}
+          {% if session.private %}
+          <li><b>PRIVATE</b></li>
+          {% endif %}
+
         </ul>
     </p>
 </div>
