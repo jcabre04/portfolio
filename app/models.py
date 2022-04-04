@@ -63,8 +63,8 @@ class Session(db.Model):
         onupdate=datetime.utcnow,
         nullable=False,
     )
-    starttime = db.Column(db.DateTime, index=True, nullable=True)
-    endtime = db.Column(db.DateTime, index=True, nullable=True)
+    starttime = db.Column(db.DateTime, index=True, nullable=False)
+    endtime = db.Column(db.DateTime, index=True, nullable=False)
 
     private = db.Column(db.Boolean, default=False, nullable=False)
 
