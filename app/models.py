@@ -70,6 +70,9 @@ class Session(db.Model):
 
     # Foreign Keys
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    project_id = db.Column(
+        db.Integer, db.ForeignKey("project.id"), nullable=True, default=1
+    )
 
     # Methods to access relationships
     skills = db.relationship(
@@ -84,6 +87,17 @@ class Session(db.Model):
 
     def get_skill_list_string(self):
         return ",".join([skill.name for skill in self.skills.all()])
+
+
+class Project(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), index=True, nullable=False)
+
+    # Methods to access relationships
+    sessions = db.relationship("Session", backref="project", lazy="dynamic")
+
+    def __repr__(self):
+        return "<Project {}>".format(self.name)
 
 
 class Skill(db.Model):

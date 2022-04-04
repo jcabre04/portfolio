@@ -8,9 +8,12 @@ from wtforms import (
     StringField,
     SubmitField,
     TextAreaField,
+    FormField,
 )
 from wtforms.validators import DataRequired, Optional, ValidationError
 import pytz
+
+from app.models import Project
 
 
 class LoginForm(FlaskForm):
@@ -18,6 +21,18 @@ class LoginForm(FlaskForm):
     password = PasswordField("Password", validators=[DataRequired()])
     remember_me = BooleanField("Remember Me")
     submit = SubmitField("Sign In")
+
+
+class ProjectForm(FlaskForm):
+    new_project = StringField("New Project", validators=[Optional()])
+    old_project = SelectField(
+        "Existing Projects",
+        validators=[Optional()],
+        choices=[
+            (project.id, project.name) for project in Project.query.all()
+        ],
+        default="No Project",
+    )
 
 
 class SessionForm(FlaskForm):
@@ -32,6 +47,7 @@ class SessionForm(FlaskForm):
     timezone = SelectField(
         "Timezone", validators=[DataRequired()], choices=pytz.common_timezones
     )
+    project = FormField(ProjectForm)
     created = DateTimeField(
         "[optional] Date Completed (YYYY-MM-DD)",
         format="%Y-%m-%d",

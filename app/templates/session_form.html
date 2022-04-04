@@ -40,6 +40,13 @@
             {% endfor %}
         </p>
         <p>
+            {{ form.project.label }}<br>
+            {{ form.project() }}<br>
+            {% for error in form.project.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
             {{ form.created.label }}<br>
             {{ form.created(size=32) }}<br>
             {% for error in form.created.errors %}
