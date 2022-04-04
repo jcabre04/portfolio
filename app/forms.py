@@ -59,12 +59,12 @@ class SessionForm(FlaskForm):
         validators=[Optional()],
     )
     starttime = DateTimeField(
-        "[optional] Start Time (HH:MM)",
+        "Start Time (HH:MM)",
         format="%H:%M",
         validators=[DataRequired()],
     )
     endtime = DateTimeField(
-        "[optional] End Time (HH:MM)",
+        "End Time (HH:MM)",
         format="%H:%M",
         validators=[DataRequired()],
     )
