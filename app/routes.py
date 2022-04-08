@@ -3,22 +3,29 @@ from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.urls import url_parse
 
 from app import app, db
-from app.forms import LoginForm, SessionForm
-from app.models import Session, Skill, User, create_skills_from_csv_string
+from app.forms import LoginForm, SessionForm, SkillForm, ProjectForm
+from app.models import (
+    Session,
+    Skill,
+    User,
+    create_skills_from_csv_string,
+    Project,
+)
 import pytz
 
 
 @app.route("/")
 @app.route("/index")
 def index():
-    users = User.query.all()[-5:]
-    sessions = Session.query.all()[-5:]
-    skills = Skill.query.all()[-5:]
+    users = reversed(User.query.all()[-3:])
+    projects = reversed(Project.query.all()[-3:])
+    sessions = reversed(Session.query.all()[-3:])
+    skills = reversed(Skill.query.all()[-3:])
     return render_template(
         "index.html",
         users=users,
+        projects=projects,
         sessions=sessions,
-        short_session=True,
         skills=skills,
     )
 
@@ -60,6 +67,83 @@ def _localize_tz(pytz_local, datetime_obj):
     return localized
 
 
+@app.route("/project", methods=["GET", "POST"])
+@login_required
+def project():
+    form = ProjectForm()
+
+    if form.validate_on_submit():
+        new_project = Project(
+            name=form.name.data,
+        )
+
+        db.session.add(new_project)
+        db.session.commit()
+        return redirect(url_for("project"))
+
+    return render_template("project_form.html", title="Project", form=form)
+
+
+@app.route("/project/all")
+@login_required
+def project_all():
+    projects = reversed(Project.query.all())
+    return render_template(
+        "project_all.html",
+        title="All Project",
+        short_project=True,
+        projects=projects,
+    )
+
+
+@app.route("/project/<id>")
+@login_required
+def project_one(id):
+    projects = [Project.query.get(id)]
+
+    if not projects[0]:
+        raise ("Invalid session id")
+
+    sessions = projects[0].sessions
+
+    return render_template(
+        "project_all.html",
+        title=projects[0].name,
+        projects=projects,
+        sessions=sessions,
+    )
+
+
+@app.route("/project/<id>/update", methods=["GET", "POST"])
+@login_required
+def project_update(id):
+    form = ProjectForm()
+    pro = Project.query.get(id)
+
+    if not pro:
+        raise ("Invalid project id")
+
+    # Successful update, replace db values with form's
+    if form.validate_on_submit():
+        pro.name = form.name.data
+        db.session.commit()
+        return redirect(url_for("project_one", id=pro.id))
+
+    form.name.data = pro.name
+    return render_template("project_form.html", title="Project", form=form)
+
+
+@app.route("/project/<id>/delete")
+@login_required
+def project_delete(id):
+    pro = Project.query.get(id)
+
+    if pro:
+        db.session.delete(pro)
+        db.session.commit()
+    return redirect(url_for("project_all"))
+
+
 @app.route("/session", methods=["GET", "POST"])
 @login_required
 def session():
@@ -90,18 +174,29 @@ def session():
 
         current_user.sessions.append(new_session)
 
+        if form.project.new_project.data:
+            project = Project(name=form.project.new_project.data)
+            db.session.add(project)
+        else:
+            project = Project.query.get(form.project.old_project.data)
+        project.sessions.append(new_session)
+
         db.session.add(new_session)
         db.session.commit()
         return redirect(url_for("session"))
 
     form.timezone.data = "US/Pacific"
+    form.project.old_project.choices = [
+        (project.id, project.name) for project in Project.query.all()
+    ]
+    form.project.old_project.data = 1
     return render_template("session_form.html", title="Session", form=form)
 
 
 @app.route("/session/all")
 @login_required
 def session_all():
-    sessions = Session.query.all()
+    sessions = reversed(Session.query.all())
     return render_template(
         "session_all.html",
         title="All Sessions",
@@ -119,7 +214,7 @@ def session_one(id):
         raise ("Invalid session id")
 
     return render_template(
-        "session_all.html", title="All Sessions", sessions=sessions
+        "session_all.html", title=sessions[0].name, sessions=sessions
     )
 
 
@@ -135,6 +230,7 @@ def session_update(id):
     # Successful update, replace db values with form's
     if form.validate_on_submit():
         skills = create_skills_from_csv_string(form.skills.data)
+        Project.query.get(se.project_id).sessions.remove(se)
         se.name = form.name.data
         se.duration = form.duration.data
         se.level = form.level.data
@@ -155,6 +251,13 @@ def session_update(id):
         for skill in skills:
             se.skills.append(skill)
 
+        if form.project.new_project.data:
+            project = Project(name=form.project.new_project.data)
+            db.session.add(project)
+        else:
+            project = Project.query.get(form.project.old_project.data)
+        project.sessions.append(se)
+
         db.session.commit()
         return redirect(url_for("session_one", id=se.id))
 
@@ -168,6 +271,10 @@ def session_update(id):
     form.endtime.data = se.endtime
     form.private.data = se.private
     form.skills.data = se.get_skill_list_string()
+    form.project.old_project.choices = [
+        (project.id, project.name) for project in Project.query.all()
+    ]
+    form.project.old_project.data = se.project.id
     return render_template("session_form.html", title="Session", form=form)
 
 
@@ -182,9 +289,84 @@ def session_delete(id):
     return redirect(url_for("session_all"))
 
 
+@app.route("/skill", methods=["GET", "POST"])
+@login_required
+def skill():
+    form = SkillForm()
+
+    if form.validate_on_submit():
+        new_skill = Skill(
+            name=form.name.data,
+            explanation=form.explanation.data,
+        )
+
+        db.session.add(new_skill)
+        db.session.commit()
+        return redirect(url_for("skill"))
+
+    return render_template("skill_form.html", title="Skill", form=form)
+
+
+@app.route("/skill/all")
+@login_required
+def skill_all():
+    skills = reversed(Skill.query.all())
+    return render_template(
+        "skill_all.html",
+        title="All Skills",
+        short_skill=True,
+        skills=skills,
+    )
+
+
+@app.route("/skill/<id>")
+@login_required
+def skill_one(id):
+    skills = [Skill.query.get(id)]
+
+    if not skills[0]:
+        raise ("Invalid session id")
+
+    return render_template(
+        "skill_all.html", title=skills[0].name, skills=skills
+    )
+
+
+@app.route("/skill/<id>/update", methods=["GET", "POST"])
+@login_required
+def skill_update(id):
+    form = SkillForm()
+    sk = Skill.query.get(id)
+
+    if not sk:
+        raise ("Invalid session id")
+
+    # Successful update, replace db values with form's
+    if form.validate_on_submit():
+        sk.name = form.name.data
+        sk.explanation = form.explanation.data
+        db.session.commit()
+        return redirect(url_for("skill_one", id=sk.id))
+
+    form.name.data = sk.name
+    form.explanation.data = sk.explanation
+    return render_template("skill_form.html", title="Skill", form=form)
+
+
+@app.route("/skill/<id>/delete")
+@login_required
+def skill_delete(id):
+    sk = Skill.query.get(id)
+
+    if sk:
+        db.session.delete(sk)
+        db.session.commit()
+    return redirect(url_for("skill_all"))
+
+
 @app.route("/about")
 def about():
-    return "All about Flask"
+    return "All about this portfolio and its creator"
 
 
 @app.route("/changelog")
@@ -195,4 +377,4 @@ def changelog():
 @app.route("/admin")
 @login_required
 def admin():
-    return "Admin dashboard"
+    return "Admin dashboard?"

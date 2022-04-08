@@ -11,6 +11,7 @@
           <li>Private: {{ session.private }}</li>
           <li>Author: {{ session.author.username }}</li>
           <li>Skills: {{ session.get_skill_list_string() }}</li>
+          <li>Session ID: {{ session.project_id }}</li>
           {% if current_user.is_active %}
           <li><a href="{{ url_for('session_update', id=session.id) }}">Edit</a> | <a href="{{ url_for('session_delete', id=session.id) }}">Delete</a></li>
           {% endif %}

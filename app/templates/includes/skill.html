@@ -1,0 +1,10 @@
+<div>
+    <p><a href="{{ url_for('skill_one', id=skill.id) }}"><b>{{ skill.name }}: </b></a>
+        <ul>
+          <li>Explanation: {{ skill.explanation }}</li>
+          {% if current_user.is_active %}
+          <li><a href="{{ url_for('skill_update', id=skill.id) }}">Edit</a> | <a href="{{ url_for('skill_delete', id=skill.id) }}">Delete</a></li>
+          {% endif %}
+        </ul>
+    </p>
+</div>

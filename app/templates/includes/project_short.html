@@ -1,0 +1,9 @@
+<div>
+    <p>{{project.id}} | <a href="{{ url_for('project_one', id=project.id) }}"><b>{{ project.name }}: </b></a>
+        <ul>
+          {% if current_user.is_active %}
+          <li><a href="{{ url_for('project_update', id=project.id) }}">Edit</a> | <a href="{{ url_for('project_delete', id=project.id) }}">Delete</a></li>
+          {% endif %}
+        </ul>
+    </p>
+</div>

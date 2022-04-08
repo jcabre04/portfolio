@@ -15,26 +15,25 @@
 </div>
 {% endfor %}
 
+<h2>Projects:</h2>
+{% for project in projects %}
+
+  {% include 'includes/project_short.html' %}
+
+{% endfor %}
+
+
 <h2>Sessions:</h2>
 {% for session in sessions %}
 
-  {% if short_session %}
-    {% include 'includes/session_short.html' %}
-  {% else %}
-    {% include 'includes/session.html' %}
-  {% endif %}
+  {% include 'includes/session_short.html' %}
 
 {% endfor %}
 
 <h2>Skills:</h2>
 {% for skill in skills %}
-<div>
-    <p><b>{{ skill.name }}:</b>
-        <ul>
-          <li>Explanation: {{ skill.explanation }}</li>
-        </ul>
-    </p>
-</div>
+
+  {% include 'includes/skill_short.html' %}
 
 {% endfor %}
 

@@ -13,8 +13,6 @@ from wtforms import (
 from wtforms.validators import DataRequired, Optional, ValidationError
 import pytz
 
-from app.models import Project
-
 
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired()])
@@ -24,14 +22,16 @@ class LoginForm(FlaskForm):
 
 
 class ProjectForm(FlaskForm):
+    name = StringField("Name", validators=[DataRequired()])
+    submit = SubmitField("Submit")
+
+
+class ProjectOptionForm(FlaskForm):
     new_project = StringField("New Project", validators=[Optional()])
     old_project = SelectField(
         "Existing Projects",
-        validators=[Optional()],
-        choices=[
-            (project.id, project.name) for project in Project.query.all()
-        ],
-        default="No Project",
+        validate_choice=False,
+        coerce=int,
     )
 
 
@@ -47,7 +47,7 @@ class SessionForm(FlaskForm):
     timezone = SelectField(
         "Timezone", validators=[DataRequired()], choices=pytz.common_timezones
     )
-    project = FormField(ProjectForm)
+    project = FormField(ProjectOptionForm)
     created = DateTimeField(
         "[optional] Date Completed (YYYY-MM-DD)",
         format="%Y-%m-%d",
@@ -82,3 +82,9 @@ class SessionForm(FlaskForm):
         elif field.data is not None and form.starttime.data is not None:
             if field.data < form.starttime.data:
                 raise ValidationError(end_smaller_msg)
+
+
+class SkillForm(FlaskForm):
+    name = StringField("Name", validators=[DataRequired()])
+    explanation = TextAreaField("[optional] Explanation")
+    submit = SubmitField("Submit")

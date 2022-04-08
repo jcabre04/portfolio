@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div>
+  <a href="{{ url_for('skill') }}">New Skill</a>
+</div>
+
+<h1>All Skills</h1>
+
+  {% for skill in skills %}
+
+    {% if short_skill %}
+      {% include 'includes/skill_short.html' %}
+    {% else %}
+      {% include 'includes/skill.html' %}
+    {% endif %}
+
+  {% endfor %}
+
+{% endblock %}

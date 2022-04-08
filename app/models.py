@@ -71,7 +71,7 @@ class Session(db.Model):
     # Foreign Keys
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     project_id = db.Column(
-        db.Integer, db.ForeignKey("project.id"), nullable=True, default=1
+        db.Integer, db.ForeignKey("project.id"), nullable=False, default=1
     )
 
     # Methods to access relationships
