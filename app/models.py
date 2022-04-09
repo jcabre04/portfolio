@@ -5,6 +5,11 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from app import db, login
 
+import pandas as pd
+import json
+import plotly
+import plotly.express as px
+
 
 @login.user_loader
 def load_user(id):
@@ -98,6 +103,25 @@ class Project(db.Model):
 
     def __repr__(self):
         return "<Project {}>".format(self.name)
+
+    def get_graphJSON(self):
+        skills = []
+        times = []
+        for se in self.sessions.all():
+            for sk in se.skills.all():
+                skills.append(sk.name)
+                times.append(se.duration)
+
+        df = pd.DataFrame(
+            {
+                "Skills": skills,
+                "Time (min)": times,
+            }
+        )
+
+        fig = px.bar(df, x="Skills", y="Time (min)", barmode="group")
+        graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+        return graphJSON
 
 
 class Skill(db.Model):

@@ -3,6 +3,7 @@
     <h5 class="card-title">
       {{project.id}} | <a href="{{ url_for('project_one', id=project.id) }}"><b>{{ project.name }}: </b></a>
     </h5>
+  <div id='{{project.name}}' class='chart'”></div>
   </div>
   {% if current_user.is_active %}
     <div class="card-footer text=muted">
@@ -10,3 +11,9 @@
     </div>
   {% endif %}
 </div>
+
+<script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+<script type='text/javascript'>
+  var {{'graphs_{}'.format(project.id)}} = {{project.get_graphJSON() | safe}};
+  Plotly.plot('{{project.name}}',{{'graphs_{}'.format(project.id)}},{});
+</script>

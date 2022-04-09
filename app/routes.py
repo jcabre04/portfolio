@@ -149,6 +149,11 @@ def project_delete(id):
 def session():
     form = SessionForm()
 
+    if form.project.old_project.choices is None:
+        form.project.old_project.choices = [
+            (project.id, project.name) for project in Project.query.all()
+        ]
+
     if form.validate_on_submit():
         skills = create_skills_from_csv_string(form.skills.data)
         new_session = Session(
@@ -186,9 +191,6 @@ def session():
         return redirect(url_for("session"))
 
     form.timezone.data = "US/Pacific"
-    form.project.old_project.choices = [
-        (project.id, project.name) for project in Project.query.all()
-    ]
     form.project.old_project.data = 1
     return render_template("session_form.html", title="Session", form=form)
 
@@ -226,6 +228,11 @@ def session_update(id):
 
     if not se:
         raise ("Invalid session id")
+
+    if form.project.old_project.choices is None:
+        form.project.old_project.choices = [
+            (project.id, project.name) for project in Project.query.all()
+        ]
 
     # Successful update, replace db values with form's
     if form.validate_on_submit():
@@ -271,9 +278,6 @@ def session_update(id):
     form.endtime.data = se.endtime
     form.private.data = se.private
     form.skills.data = se.get_skill_list_string()
-    form.project.old_project.choices = [
-        (project.id, project.name) for project in Project.query.all()
-    ]
     form.project.old_project.data = se.project.id
     return render_template("session_form.html", title="Session", form=form)
 
