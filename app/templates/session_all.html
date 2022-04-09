@@ -1,9 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div>
-  <a href="{{ url_for('session') }}">New Session</a>
-</div>
+
+<a class="btn btn-primary btn-md mb-2" href="{{ url_for('session') }}" role="button">New Session</a>
 
 <h1>All Sessions</h1>
 
