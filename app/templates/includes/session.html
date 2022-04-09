@@ -1,20 +1,27 @@
-<div>
-    <p><a href="{{ url_for('session_one', id=session.id) }}"><b>{{ session.name }}: </b></a>
-        <ul>
-          <li>Duration: {{ session.duration }}</li>
-          <li>Level: {{ session.level }}</li>
-          <li>Explanation: {{ session.explanation }}</li>
-          <li>Created: {{ session.created }}</li>
-          <li>Last Edited: {{ session.edited }}</li>
-          <li>Starttime: {{ session.starttime }}</li>
-          <li>endtime: {{ session.endtime }}</li>
-          <li>Private: {{ session.private }}</li>
-          <li>Author: {{ session.author.username }}</li>
-          <li>Skills: {{ session.get_skill_list_string() }}</li>
-          <li>Session ID: {{ session.project_id }}</li>
-          {% if current_user.is_active %}
-          <li><a href="{{ url_for('session_update', id=session.id) }}">Edit</a> | <a href="{{ url_for('session_delete', id=session.id) }}">Delete</a></li>
-          {% endif %}
-        </ul>
+<div class="card mb-3">
+  <div class="card-body">
+    <h5 class="card-title">
+      {{session.id}} | <a href="{{url_for('session_one', id=session.id) }}"><b> {{ session.name }}: </b></a>
+    </h5>
+    <p class="card-text">
+      <ul>
+        <li>Duration: {{ session.duration }}</li>
+        <li>Level: {{ session.level }}</li>
+        <li>Explanation: {{ session.explanation }}</li>
+        <li>Created: {{ session.created }}</li>
+        <li>Last Edited: {{ session.edited }}</li>
+        <li>Starttime: {{ session.starttime }}</li>
+        <li>endtime: {{ session.endtime }}</li>
+        <li>Private: {{ session.private }}</li>
+        <li>Author: {{ session.author.username }}</li>
+        <li>Skills: {{ session.get_skill_list_string() }}</li>
+        <li>Session ID: {{ session.project_id }}</li>
+      </ul>
     </p>
+  </div>
+  {% if current_user.is_active %}
+    <div class="card-footer text=muted">
+      <a href="{{ url_for('session_update', id=session.id) }}">Edit</a> | <a href="{{ url_for('session_delete', id=session.id) }}">Delete</a>
+    </div>
+  {% endif %}
 </div>

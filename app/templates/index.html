@@ -2,19 +2,6 @@
 
 {% block content %}
 
-{% if current_user.is_active %}
-<h1>Hi, {{ current_user.username }}!</h1>
-{% else %}
-<h1>Hi Guest!</h1>
-{% endif %}
-
-<h2>Users:</h2>
-{% for user in users %}
-<div>
-    <p>Does {{ user.username }} have admin privileges? <b>{{ user.admin }}</b></p>
-</div>
-{% endfor %}
-
 <h2>Projects:</h2>
 {% for project in projects %}
 

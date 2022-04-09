@@ -1,9 +1,12 @@
-<div>
-    <p>{{skill.id}} | <a href="{{ url_for('skill_one', id=skill.id) }}"><b>{{ skill.name }}: </b></a>
-        <ul>
-          {% if current_user.is_active %}
-          <li><a href="{{ url_for('skill_update', id=skill.id) }}">Edit</a> | <a href="{{ url_for('skill_delete', id=skill.id) }}">Delete</a></li>
-          {% endif %}
-        </ul>
-    </p>
+<div class="card mb-3">
+  <div class="card-body">
+    <h5 class="card-title">
+      {{skill.id}} | <a href="{{ url_for('skill_one', id=skill.id) }}"><b>{{ skill.name }}: </b></a>
+    </h5>
+  </div>
+  {% if current_user.is_active %}
+    <div class="card-footer text=muted">
+      <a href="{{ url_for('skill_update', id=skill.id) }}">Edit</a> | <a href="{{ url_for('skill_delete', id=skill.id) }}">Delete</a>
+    </div>
+  {% endif %}
 </div>
