@@ -27,6 +27,8 @@ jobs:
     - name: Run Tests
       run: |
         export MY_NEW_VARDATABASE_URL="sqlite:///:memory:"
+        rm -rf migrations
         flask db init
+        flask db migrate
         flask db upgrade
         python -m pytest
