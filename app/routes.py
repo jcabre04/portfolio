@@ -85,7 +85,6 @@ def project():
 
 
 @app.route("/project/all")
-@login_required
 def project_all():
     projects = reversed(Project.query.all())
     return render_template(
@@ -97,7 +96,6 @@ def project_all():
 
 
 @app.route("/project/<id>")
-@login_required
 def project_one(id):
     projects = [Project.query.get(id)]
 
@@ -196,7 +194,6 @@ def session():
 
 
 @app.route("/session/all")
-@login_required
 def session_all():
     sessions = reversed(Session.query.all())
     return render_template(
@@ -208,7 +205,6 @@ def session_all():
 
 
 @app.route("/session/<id>")
-@login_required
 def session_one(id):
     sessions = [Session.query.get(id)]
 
@@ -312,7 +308,6 @@ def skill():
 
 
 @app.route("/skill/all")
-@login_required
 def skill_all():
     skills = reversed(Skill.query.all())
     return render_template(
@@ -324,7 +319,6 @@ def skill_all():
 
 
 @app.route("/skill/<id>")
-@login_required
 def skill_one(id):
     skills = [Skill.query.get(id)]
 

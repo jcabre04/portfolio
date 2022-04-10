@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<h2>Projects:</h2>
+<h2>Latest Projects:</h2>
 {% for project in projects %}
 
   {% include 'includes/project_short.html' %}
@@ -10,14 +10,14 @@
 {% endfor %}
 
 
-<h2>Sessions:</h2>
+<h2>Latest Sessions:</h2>
 {% for session in sessions %}
 
   {% include 'includes/session_short.html' %}
 
 {% endfor %}
 
-<h2>Skills:</h2>
+<h2>Latest Skills:</h2>
 {% for skill in skills %}
 
   {% include 'includes/skill_short.html' %}

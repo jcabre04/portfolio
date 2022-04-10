@@ -25,11 +25,6 @@
               <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="{{ url_for('index') }}">Home</a>
               </li>
-              {% if current_user.is_anonymous %}
-                <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('login') }}">Login</a>
-                </li>
-              {% else %}
               <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('project_all') }}">Projects</a>
               </li>
@@ -39,6 +34,11 @@
               <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('skill_all') }}">Skills</a>
               </li>
+              {% if current_user.is_anonymous %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                </li>
+              {% else %}
               <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
               </li>
