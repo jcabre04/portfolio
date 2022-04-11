@@ -1,0 +1,31 @@
+Add Changelog page with all the functionality built into each version of the website
+
+CASCADE DELETE?
+ALL __ NAMING WHEN IN AN INDIVIDUAL THING
+When creating a new project, CHECK NEW PROJECT IS NOT EXISTING ONE. IF TRUE, USE EXISTING ONE
+
+Add bootstrap look to Forms
+
+!!!! Make sure that all sessions get assigned to No Project when deleting a Project
+
+# Session PAGE
+Add Skill hyperlinks per skill
+
+# SKILLS PAGE
+Add Total Time per Skill
+Add Graph at the top showing all SkillxDuration
+Add Graphs for professional / personal skills
+
+# Indv Skill Page
+Add Total Sessions per skill
+Change incorrect session id to Project ID
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+RESOURCES
+# GRAPH guide
+### https://towardsdatascience.com/web-visualization-with-plotly-and-flask-3660abf9c946
+
+# BootStrap from its webpage
+
+# github actions guide
+https://www.freecodecamp.org/news/how-to-setup-a-ci-cd-pipeline-with-github-actions-and-aws/
