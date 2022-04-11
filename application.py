@@ -14,4 +14,5 @@ def make_shell_processor():
 
 
 if __name__ == "__main__":
+    application = app
     app.run()
