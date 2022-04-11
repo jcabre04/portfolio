@@ -1,4 +1,4 @@
-name: Build and Test
+name: Test and Deploy
 
 on:
   push:
@@ -33,7 +33,7 @@ jobs:
         flask db upgrade
         python -m pytest
 
-  deploy-to-test:
+  deploy:
     # Only run this job if "build" has ended successfully
     needs:
       - test
@@ -70,6 +70,6 @@ jobs:
         eb init -p python-3.8 portfolio --region us-west-2
 
     # Deploy to (or Create) the Elastic Beanstalk environment
-    - name: Create test environment & deploy
+    - name: Create portfolio environment & deploy
       run: |
-        (eb use portfolio-env && eb status portfolio-env && eb deploy) || eb create portfolio-env
+        (eb use portfolio-env && eb status portfolio-env && eb deploy) || eb create portfolio-env --envvars FLASK_APP=run.py
