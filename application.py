@@ -1,6 +1,8 @@
 from app import app, db
 from app.models import Session, Skill, User, Project
 
+application = app
+
 
 @app.shell_context_processor
 def make_shell_processor():
@@ -14,5 +16,4 @@ def make_shell_processor():
 
 
 if __name__ == "__main__":
-    application = app
     application.run()
