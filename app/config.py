@@ -11,7 +11,7 @@ class Config(object):
         port = os.environ["RDS_PORT"]
         db_name = os.environ["RDS_DB_NAME"]
         SQLALCHEMY_DATABASE_URI = (
-            f"mysql+mysqldb://{user}:{passw}@{host}:{port}/{db_name}"
+            f"mysql+pymysql://{user}:{passw}@{host}:{port}/{db_name}"
         )
     else:
         SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(
