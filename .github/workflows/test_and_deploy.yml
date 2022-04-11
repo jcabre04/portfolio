@@ -67,7 +67,7 @@ jobs:
     # Create the Elastic Beanstalk application
     - name: Create EBS application
       run: |
-        eb init -p python3.8 portfolio --region us-west-2
+        eb init -p python-3.8 portfolio --region us-west-2
 
     # Deploy to (or Create) the Elastic Beanstalk environment
     - name: Create test environment & deploy
