@@ -1,9 +1,15 @@
-from flask import flash, redirect, render_template, request, url_for
+from flask import flash, redirect, render_template, request, url_for, send_file
 from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.urls import url_parse
 
 from app import app, db
-from app.forms import LoginForm, SessionForm, SkillForm, ProjectForm
+from app.forms import (
+    LoginForm,
+    SessionForm,
+    SkillForm,
+    ProjectForm,
+    ImportBackupForm,
+)
 from app.models import (
     Session,
     Skill,
@@ -12,6 +18,11 @@ from app.models import (
     Project,
 )
 import pytz
+
+import csv
+import os
+from zipfile import ZipFile
+from datetime import datetime, timezone
 
 
 @app.route("/")
@@ -375,4 +386,179 @@ def changelog():
 @app.route("/admin")
 @login_required
 def admin():
-    return "Admin dashboard?"
+    return render_template("admin.html")
+
+
+@app.route("/admin/download_data_backup")
+@login_required
+def download_data_backup():
+    us = User.query.all()
+    sk = Skill.query.all()
+    po = Project.query.all()
+    se = Session.query.all()
+
+    basedir = os.path.abspath(os.path.dirname(__file__) + "/static/backup/")
+    if not os.path.exists(basedir):
+        os.makedirs(basedir)
+
+    with open(basedir + r"/user.csv", "w", newline="") as user_file:
+        header = ["username", "email", "password_hash", "admin"]
+        writer = csv.writer(user_file)
+        writer.writerow(header)
+        for u in us:
+            writer.writerow([u.username, u.email, u.password_hash, u.admin])
+
+    with open(basedir + r"/skill.csv", "w", newline="") as skill_file:
+        header = ["name", "explanation"]
+        writer = csv.writer(skill_file)
+        writer.writerow(header)
+        for s in sk:
+            writer.writerow([s.name, s.explanation])
+
+    with open(basedir + r"/project.csv", "w", newline="") as project_file:
+        header = ["name"]
+        writer = csv.writer(project_file)
+        writer.writerow(header)
+        for p in po:
+            writer.writerow([p.name])
+
+    with open(basedir + r"/session.csv", "w", newline="") as session_file:
+        header = [
+            "name",
+            "duration",
+            "level",
+            "explanation",
+            "created",
+            "edited",
+            "starttime",
+            "endtime",
+            "private",
+            "user_id",
+            "project_id",
+            "skills,",
+        ]
+        writer = csv.writer(session_file)
+        writer.writerow(header)
+        for s in se:
+            writer.writerow(
+                [
+                    s.name,
+                    s.duration,
+                    s.level,
+                    s.explanation,
+                    s.created,
+                    s.edited,
+                    s.starttime,
+                    s.endtime,
+                    s.private,
+                    s.user_id,
+                    s.project_id,
+                    s.get_skill_list_string().replace(",", "|"),
+                ]
+            )
+
+    with ZipFile(basedir + r"/backup.zip", "w") as backup:
+        backup.write(basedir + r"/user.csv", arcname=r"/user.csv")
+        backup.write(basedir + r"/skill.csv", arcname=r"/skill.csv")
+        backup.write(basedir + r"/project.csv", arcname=r"/project.csv")
+        backup.write(basedir + r"/session.csv", arcname=r"/session.csv")
+
+    return send_file(basedir + r"/backup.zip", as_attachment=True)
+
+
+def _remove_dot_leftover(string_date):
+    if "." in string_date:
+        return string_date.split(".")[0]
+    return string_date
+
+
+@app.route("/admin/import_data_backup", methods=["GET", "POST"])
+def import_data_backup():
+    form = ImportBackupForm()
+
+    if form.validate_on_submit():
+        file = request.files["file"]
+        archive = ZipFile(file, "r")
+
+        users = csv.reader(archive.read("user.csv").decode().splitlines())
+        next(users)
+        skills = csv.reader(archive.read("skill.csv").decode().splitlines())
+        next(skills)
+        projects = csv.reader(
+            archive.read("project.csv").decode().splitlines()
+        )
+        next(projects)
+        sessions = csv.reader(
+            archive.read("session.csv").decode().splitlines()
+        )
+        next(sessions)
+
+        if not User.query.filter_by(username="admin").first():
+            for u in users:
+                if u:
+                    new_u = User(
+                        username=u[0],
+                        email=[1],
+                        password_hash=u[2],
+                        admin=True if u[3] == "True" else False,
+                    )
+                    db.session.add(new_u)
+            db.session.commit()
+
+        for s in skills:
+            if s:
+                new_s = Skill(
+                    name=s[0],
+                    explanation=s[1],
+                )
+                db.session.add(new_s)
+        db.session.commit()
+
+        for p in projects:
+            if p:
+                new_p = Project(
+                    name=p[0],
+                )
+                db.session.add(new_p)
+        db.session.commit()
+
+        for se in sessions:
+            if se:
+                new_se = Session(
+                    name=se[0],
+                    duration=se[1],
+                    level=se[2],
+                    explanation=se[3],
+                    created=datetime.strptime(
+                        _remove_dot_leftover(se[4]), "%Y-%m-%d %H:%M:%S"
+                    ).replace(tzinfo=timezone.utc),
+                    edited=datetime.strptime(
+                        _remove_dot_leftover(se[5]), "%Y-%m-%d %H:%M:%S"
+                    ).replace(tzinfo=timezone.utc),
+                    starttime=datetime.strptime(
+                        _remove_dot_leftover(se[6]), "%Y-%m-%d %H:%M:%S"
+                    ).replace(tzinfo=timezone.utc),
+                    endtime=datetime.strptime(
+                        _remove_dot_leftover(se[7]), "%Y-%m-%d %H:%M:%S"
+                    ).replace(tzinfo=timezone.utc),
+                    private=True if se[8] == "True" else False,
+                )
+                user = User.query.get(se[9])
+                user.sessions.append(new_se)
+
+                project = Project.query.get(se[10])
+                project.sessions.append(new_se)
+
+                new_se.skills = []
+                skill_objects = create_skills_from_csv_string(
+                    se[11].replace("|", ",")
+                )
+                for skill in skill_objects:
+                    new_se.skills.append(skill)
+                db.session.add(new_se)
+
+        db.session.commit()
+
+        return redirect(url_for("admin"))
+
+    return render_template("import_backup_form.html", form=form)

@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField
 from wtforms import (
     BooleanField,
     DateTimeField,
@@ -10,7 +11,9 @@ from wtforms import (
     TextAreaField,
     FormField,
 )
+
 from wtforms.validators import DataRequired, Optional, ValidationError
+
 import pytz
 
 
@@ -87,4 +90,9 @@ class SessionForm(FlaskForm):
 class SkillForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
     explanation = TextAreaField("[optional] Explanation")
+    submit = SubmitField("Submit")
+
+
+class ImportBackupForm(FlaskForm):
+    file = FileField("Backup File")
     submit = SubmitField("Submit")
