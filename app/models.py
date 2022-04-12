@@ -56,7 +56,7 @@ class Session(db.Model):
     name = db.Column(db.String(120), index=True, nullable=False)
     duration = db.Column(db.Integer, nullable=False)
     level = db.Column(db.String(16), index=True, nullable=False)
-    explanation = db.Column(db.Text, index=True, nullable=True)
+    explanation = db.Column(db.Text, nullable=True)
 
     created = db.Column(
         db.DateTime, index=True, default=datetime.utcnow, nullable=False
@@ -127,7 +127,7 @@ class Project(db.Model):
 class Skill(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), index=True, nullable=False)
-    explanation = db.Column(db.Text, index=True, nullable=True)
+    explanation = db.Column(db.Text, nullable=True)
 
     def __repr__(self):
         return "<Skill {}>".format(self.name)

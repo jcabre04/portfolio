@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 5d2719d270d9
+Revision ID: abf922d71cfa
 Revises:
-Create Date: 2022-04-09 20:32:23.923035
+Create Date: 2022-04-12 01:36:46.728364
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = "5d2719d270d9"
+revision = "abf922d71cfa"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -31,9 +31,6 @@ def upgrade():
         sa.Column("name", sa.String(length=120), nullable=False),
         sa.Column("explanation", sa.Text(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
-    )
-    op.create_index(
-        op.f("ix_skill_explanation"), "skill", ["explanation"], unique=False
     )
     op.create_index(op.f("ix_skill_name"), "skill", ["name"], unique=False)
     op.create_table(
@@ -83,12 +80,6 @@ def upgrade():
         op.f("ix_session_endtime"), "session", ["endtime"], unique=False
     )
     op.create_index(
-        op.f("ix_session_explanation"),
-        "session",
-        ["explanation"],
-        unique=False,
-    )
-    op.create_index(
         op.f("ix_session_level"), "session", ["level"], unique=False
     )
     op.create_index(op.f("ix_session_name"), "session", ["name"], unique=False)
@@ -118,7 +109,6 @@ def downgrade():
     op.drop_index(op.f("ix_session_starttime"), table_name="session")
     op.drop_index(op.f("ix_session_name"), table_name="session")
     op.drop_index(op.f("ix_session_level"), table_name="session")
-    op.drop_index(op.f("ix_session_explanation"), table_name="session")
     op.drop_index(op.f("ix_session_endtime"), table_name="session")
     op.drop_index(op.f("ix_session_edited"), table_name="session")
     op.drop_index(op.f("ix_session_created"), table_name="session")
@@ -127,7 +117,6 @@ def downgrade():
     op.drop_index(op.f("ix_user_email"), table_name="user")
     op.drop_table("user")
     op.drop_index(op.f("ix_skill_name"), table_name="skill")
-    op.drop_index(op.f("ix_skill_explanation"), table_name="skill")
     op.drop_table("skill")
     op.drop_index(op.f("ix_project_name"), table_name="project")
     op.drop_table("project")
