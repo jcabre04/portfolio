@@ -72,4 +72,4 @@ jobs:
     # Deploy to (or Create) the Elastic Beanstalk environment
     - name: Create portfolio environment & deploy
       run: |
-        (eb use portfolio-env && eb status portfolio-env && eb deploy) || eb create portfolio-env
+        (eb use portfolio-prod && eb status portfolio-prod && eb deploy) || eb create portfolio-prod
